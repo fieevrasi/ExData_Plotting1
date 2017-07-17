@@ -1,26 +1,19 @@
+# Needed packages
+library(data.table)
 
-# Tehtävä 1
+# Read data
+DT_full <- read.table("household_power_consumption.txt", header=TRUE, sep=";", na.strings="?") 
 
-fileUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
-download.file(fileUrl, destfile="C:/WD/data/community_survey.csv", method="curl")
+# Subset the data
+DT_sub <- DT_full[DT_full$Date %in% c("1/2/2007","2/2/2007") ,] 
 
-dt <- data.table(read.csv("C:/WD/data/community_survey.csv"))
-varNames <- names(dt)
-varNamesSplit <- strsplit(varNames, "wgtp")
-varNamesSplit[[123]]
+# Datetime
+datetime <- strptime(paste(DT_sub$Date, DT_sub$Time, sep=" "), "%d/%m/%Y %H:%M:%S")  
 
+# Global active power
+globalActivePower <- as.numeric(DT_sub$Global_active_power)
 
-# Tehtävä 2
-fileUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv"
-download.file(fileUrl, destfile="C:/WD/data/FGDP.csv")
-dt <- data.table(read.csv("C:/WD/data/FGDP.csv"))
-
-
-
-# Vastaus
--16776939 -10092545 
-
-# Tehtävä 5
-library(quantmod)
-amzn = getSymbols("AMZN",auto.assign=FALSE)
-sampleTimes = index(amzn)
+# Make a plot
+png("plot1.png", width=480, height=480) 
+hist(globalActivePower, col="red", main="Global Active Power", xlab="Global Active Power (kilowatts)")
+dev.off() 
